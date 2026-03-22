@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 style="text-align:center; margin-top:30px;">My Bookings</h2>
+
+<div style="padding:20px; max-width:600px; margin:auto;">
+
+{% for booking in bookings %}
+
+<div style="border:1px solid #ddd; padding:15px; margin-bottom:10px; border-radius:8px;">
+
+    <p>
+        <strong>{{ booking.ride.pickup_location }}</strong>
+        →
+        {{ booking.ride.destination }}
+    </p>
+
+    <p>
+        Price: €{{ booking.ride.price }}
+    </p>
+
+    <p>
+        Status:
+        <span style="color:{% if booking.status == 'BOOKED' %}green{% else %}red{% endif %}; font-weight:bold;">
+            {{ booking.status }}
+        </span>
+    </p>
+
+    {% if booking.status == 'BOOKED' %}
+        <a href="{% url 'cancelbooking' booking.id %}">
+            <button style="background:red; color:white; padding:5px 10px; border:none; border-radius:5px;">
+                Cancel Booking
+            </button>
+        </a>
+    {% endif %}
+
+</div>
+
+{% empty %}
+<p style="text-align:center;">No bookings yet.</p>
+{% endfor %}
+
+</div>
+
+{% endblock %}

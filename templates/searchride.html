@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+        <p style="color:green; text-align:center;">
+            {{ message }}
+        </p>
+    {% endfor %}
+{% endif %}
+
+<h2 style="text-align:center; margin-top:30px;">Find Your Ride</h2>
+
+<div style="text-align:center; margin:20px;">
+
+<form method="GET">
+    <input type="text" name="pickup" placeholder="Pickup Location">
+    <input type="text" name="destination" placeholder="Destination">
+    <button type="submit">Search</button>
+</form>
+
+</div>
+
+<hr>
+
+<div style="padding:20px;">
+
+{% for ride in rides %}
+<p>
+    <strong>{{ ride.pickup_location }}</strong> → {{ ride.destination }} |
+    Seats: {{ ride.seats_available }} |
+    Price: €{{ ride.price }}
+
+    {% if ride.seats_available > 0 %}
+        <!-- ✅ PAYMENT BUTTON -->
+        <a href="{% url 'payment' ride.id %}" style="margin-left:10px; color:green;">
+            Pay & Book
+        </a>
+    {% else %}
+        <!-- ❌ NO SEATS -->
+        <span style="color:red; margin-left:10px;">
+            Full
+        </span>
+    {% endif %}
+</p>
+{% empty %}
+<p>No rides found.</p>
+{% endfor %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2 style="text-align:center; margin-top:30px;">Payment History</h2>
+
+<div style="padding:20px; max-width:700px; margin:auto;">
+
+{% for booking in bookings %}
+
+<div style="border:1px solid #ddd; padding:15px; margin-bottom:10px; border-radius:8px;">
+
+    <p>
+        <strong>{{ booking.ride.pickup_location }}</strong>
+        →
+        {{ booking.ride.destination }}
+    </p>
+
+    <p>
+        Price: €{{ booking.ride.price }}
+    </p>
+
+    <p>
+        Date: {{ booking.booking_date }}
+    </p>
+
+    <p>
+        Status:
+        <span style="color:{% if booking.status == 'BOOKED' %}green{% else %}red{% endif %}; font-weight:bold;">
+            {{ booking.status }}
+        </span>
+    </p>
+
+</div>
+
+{% empty %}
+<p style="text-align:center;">No payments yet.</p>
+{% endfor %}
+
+</div>
+
+{% endblock %}

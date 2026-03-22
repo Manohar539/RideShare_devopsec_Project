@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div style="text-align:center; margin-top:50px;">
+
+    <h1 style="color:green;">🎉 Payment Successful!</h1>
+
+    <p>Your ride has been booked successfully.</p>
+
+    <hr style="width:50%; margin:20px auto;">
+
+    <h3>Ride Details</h3>
+
+    <p><strong>From:</strong> {{ ride.pickup_location }}</p>
+    <p><strong>To:</strong> {{ ride.destination }}</p>
+    <p><strong>Price:</strong> €{{ ride.price }}</p>
+
+    <br>
+
+    <a href="{% url 'mybookings' %}">
+        <button style="padding:10px 20px;">Go to My Bookings</button>
+    </a>
+
+</div>
+
+{% endblock %}
