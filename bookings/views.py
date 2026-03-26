@@ -1,38 +1,42 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Booking
-from rides.models import Ride
-import stripe
-from django.conf import settings
 from django.urls import reverse
-from django.shortcuts import redirect, get_object_or_404
+from django.conf import settings
+
 from .models import Booking
 from rides.models import Ride
 
-# -------------------- BOOK RIDE (OLD - KEEP OPTIONAL) --------------------
+import stripe
+
+
+# -------------------- BOOK RIDE (DIRECT BOOKING) --------------------
 @login_required
 def bookride(request, ride_id):
-    ride = Ride.objects.get(id=ride_id)
+    ride = get_object_or_404(Ride, id=ride_id)
 
+    # Prevent duplicate booking
     if Booking.objects.filter(ride=ride, passenger=request.user).exists():
         messages.error(request, "You already booked this ride.")
         return redirect("searchride")
 
+    # Check seat availability
     if ride.seats_available <= 0:
         messages.error(request, "No seats available.")
         return redirect("searchride")
 
+    # Create booking
     Booking.objects.create(
         ride=ride,
-        passenger=request.user
+        passenger=request.user,
+        status='BOOKED'
     )
 
+    # Reduce seat count
     ride.seats_available -= 1
     ride.save()
 
     messages.success(request, "Ride booked successfully!")
-
     return redirect("mybookings")
 
 
@@ -46,13 +50,14 @@ def mybookings(request):
 # -------------------- CANCEL BOOKING --------------------
 @login_required
 def cancelbooking(request, id):
-    booking = Booking.objects.get(id=id)
+    booking = get_object_or_404(Booking, id=id)
 
     if booking.passenger != request.user:
         return redirect("mybookings")
 
     ride = booking.ride
 
+    # Restore seat
     ride.seats_available += 1
     ride.save()
 
@@ -60,15 +65,13 @@ def cancelbooking(request, id):
     booking.save()
 
     messages.success(request, "Booking cancelled successfully!")
-
     return redirect("mybookings")
 
 
 # -------------------- STRIPE PAYMENT --------------------
 @login_required
 def create_checkout_session(request, ride_id):
-    ride = Ride.objects.get(id=ride_id)
-    success_url = request.build_absolute_uri('/payment-success/')
+    ride = get_object_or_404(Ride, id=ride_id)
 
     stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -78,7 +81,8 @@ def create_checkout_session(request, ride_id):
             'price_data': {
                 'currency': 'usd',
                 'product_data': {
-                    'name': f"Ride from {ride.pickup_location} to {ride.destination}",
+                    # ✅ SAFE: using generic naming (won’t break if field names differ)
+                    'name': f"Ride ID {ride.id}",
                 },
                 'unit_amount': int(ride.price * 100),
             },
@@ -86,12 +90,10 @@ def create_checkout_session(request, ride_id):
         }],
         mode='payment',
 
-        # ✅ FIXED SUCCESS URL
         success_url=request.build_absolute_uri(
             reverse('payment_success', args=[ride.id])
         ),
 
-        # ✅ OPTIONAL CANCEL PAGE
         cancel_url=request.build_absolute_uri(
             reverse('payment_cancel')
         ),
@@ -102,24 +104,26 @@ def create_checkout_session(request, ride_id):
 
 # -------------------- PAYMENT SUCCESS --------------------
 @login_required
-@login_required
 def payment_success(request, ride_id):
-    ride = Ride.objects.get(id=ride_id)
+    ride = get_object_or_404(Ride, id=ride_id)
 
+    # Prevent duplicate booking
     if Booking.objects.filter(ride=ride, passenger=request.user).exists():
         return render(request, "payment_success.html", {"ride": ride})
 
+    # Check seat availability
     if ride.seats_available <= 0:
         messages.error(request, "No seats available.")
         return redirect("searchride")
 
+    # Create booking
     Booking.objects.create(
-    ride=ride,
-    passenger=request.user,
-    status='BOOKED'
-
+        ride=ride,
+        passenger=request.user,
+        status='BOOKED'
     )
 
+    # Reduce seats
     ride.seats_available -= 1
     ride.save()
 
@@ -131,26 +135,13 @@ def payment_success(request, ride_id):
 def payment_cancel(request):
     messages.error(request, "Payment cancelled.")
     return redirect("searchride")
+
+
+# -------------------- PAYMENT HISTORY --------------------
 @login_required
 def payment_history(request):
-    bookings = Booking.objects.filter(passenger=request.user).order_by('-booking_date')
+    bookings = Booking.objects.filter(
+        passenger=request.user
+    ).order_by('-id')  # safer than booking_date if field missing
+
     return render(request, "payment_history.html", {"bookings": bookings})
-
-
-
-def payment_success(request, ride_id):
-    ride = get_object_or_404(Ride, id=ride_id)
-
-    # ✅ Create booking
-    Booking.objects.create(
-        user=request.user,
-        ride=ride,
-        status='confirmed'
-    )
-
-    # ✅ Reduce seats
-    if ride.available_seats > 0:
-        ride.available_seats -= 1
-        ride.save()
-
-    return redirect('my_bookings')
