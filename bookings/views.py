@@ -6,7 +6,9 @@ from rides.models import Ride
 import stripe
 from django.conf import settings
 from django.urls import reverse
-
+from django.shortcuts import redirect, get_object_or_404
+from .models import Booking
+from rides.models import Ride
 
 # -------------------- BOOK RIDE (OLD - KEEP OPTIONAL) --------------------
 @login_required
@@ -66,6 +68,7 @@ def cancelbooking(request, id):
 @login_required
 def create_checkout_session(request, ride_id):
     ride = Ride.objects.get(id=ride_id)
+    success_url = request.build_absolute_uri('/payment-success/')
 
     stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -132,3 +135,22 @@ def payment_cancel(request):
 def payment_history(request):
     bookings = Booking.objects.filter(passenger=request.user).order_by('-booking_date')
     return render(request, "payment_history.html", {"bookings": bookings})
+
+
+
+def payment_success(request, ride_id):
+    ride = get_object_or_404(Ride, id=ride_id)
+
+    # ✅ Create booking
+    Booking.objects.create(
+        user=request.user,
+        ride=ride,
+        status='confirmed'
+    )
+
+    # ✅ Reduce seats
+    if ride.available_seats > 0:
+        ride.available_seats -= 1
+        ride.save()
+
+    return redirect('my_bookings')
