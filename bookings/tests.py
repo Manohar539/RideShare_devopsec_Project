@@ -1,14 +1,26 @@
 from django.test import TestCase
-from django.db import models
 from django.contrib.auth.models import User
 from rides.models import Ride
+from .models import Booking
+from datetime import datetime
 
+class BookingTest(TestCase):
 
-class Booking(models.Model):
+    def setUp(self):
+        self.user = User.objects.create_user(username="testuser", password="12345")
+        self.ride = Ride.objects.create(
+            driver=self.user,
+            pickup_location="Dublin",
+            destination="Cork",
+            ride_date=datetime.now(),
+            seats_available=3,
+            price=10.00
+        )
 
-    ride = models.ForeignKey(Ride, on_delete=models.CASCADE)
-    passenger = models.ForeignKey(User, on_delete=models.CASCADE)
-    booking_date = models.DateTimeField(auto_now_add=True)
+    def test_booking_creation(self):
+        booking = Booking.objects.create(
+            ride=self.ride,
+            passenger=self.user
+        )
 
-    def __str__(self):
-        return f"{self.passenger.username} booked {self.ride}"
+        self.assertEqual(booking.status, "BOOKED")

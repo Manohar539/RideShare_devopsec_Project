@@ -1,33 +1,21 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
-
+<html> 
 <head>
     <meta charset="UTF-8">
     <title>RideShare</title>
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-
 <body>
-
-<!-- 🔷 NAVBAR -->
 <nav class="navbar">
-
     <div class="logo">RideShare</div>
-
     <div class="nav-links">
-
         <a href="/">Home</a>
-
         {% if user.is_authenticated %}
-
             <a href="{% url 'searchride' %}">Find Ride</a>
             <a href="{% url 'createride' %}">Offer Ride</a>
             <a href="{% url 'mybookings' %}">My Bookings</a>
-            <!-- ✅ NEW: Payment History -->
             <a href="{% url 'payment_history' %}">Payments</a>
-
-            <!-- ✅ LOGOUT BUTTON -->
             <form action="{% url 'logout' %}" method="POST" style="display:inline;">
                 {% csrf_token %}
                 <button type="submit"
@@ -35,23 +23,14 @@
                     Logout
                 </button>
             </form>
-
         {% else %}
-
             <a href="/accounts/login/">Login</a>
             <a href="{% url 'register' %}">Register</a>
-
         {% endif %}
-
     </div>
-
 </nav>
-
-<!-- 🔷 PAGE CONTENT -->
 {% block content %}
 {% endblock %}
-
 <script src="{% static 'js/script.js' %}"></script>
-
 </body>
 </html>

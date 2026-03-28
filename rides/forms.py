@@ -1,9 +1,7 @@
 from django import forms
 from .models import Ride
 
-
 class RideForm(forms.ModelForm):
-
     class Meta:
         model = Ride
         fields = [
@@ -16,9 +14,7 @@ class RideForm(forms.ModelForm):
         widgets = {
             'ride_date': forms.DateTimeInput(attrs={'type': 'datetime-local'})
         }
-
-    # ✅ VALIDATION STARTS HERE
-
+        
     def clean_seats_available(self):
         seats = self.cleaned_data.get('seats_available')
         if seats is not None and seats <= 0:

@@ -4,8 +4,6 @@ font-family:Arial, Helvetica, sans-serif;
 background:#f5f5f5;
 }
 
-/* NAVBAR */
-
 .navbar{
 background:#0f1c3f;
 color:white;
@@ -26,8 +24,6 @@ margin-left:20px;
 text-decoration:none;
 font-weight:500;
 }
-
-/* HERO */
 
 .hero{
 height:450px;
@@ -52,8 +48,6 @@ font-size:20px;
 margin-bottom:20px;
 }
 
-/* BUTTON */
-
 .btn-primary{
 background:#3a7bfd;
 border:none;
@@ -63,8 +57,6 @@ color:white;
 border-radius:5px;
 cursor:pointer;
 }
-
-/* SERVICES */
 
 .services{
 margin-top:50px;
