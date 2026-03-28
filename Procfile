@@ -1,1 +1,1 @@
-web: gunicorn rideshare.wsgi
+web: gunicorn rideshare.wsgi:application --bind 0.0.0.0:8000
