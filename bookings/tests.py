@@ -4,10 +4,11 @@ from rides.models import Ride
 from .models import Booking
 from datetime import datetime
 
+
 class BookingTest(TestCase):
 
     def setUp(self):
-        self.user = User.objects.create_user(username="testuser", password="12345")
+        self.user = User.objects.create_user(username="testuser", password="testpass123")  # nosec
         self.ride = Ride.objects.create(
             driver=self.user,
             pickup_location="Dublin",

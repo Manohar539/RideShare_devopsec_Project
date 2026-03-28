@@ -5,7 +5,7 @@ from datetime import datetime
 
 class RideTest(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username="testuser", password="12345")
+        self.user = User.objects.create_user(username="testuser", password="testpass1234")  # nosec
 
     def test_create_ride(self):
         ride = Ride.objects.create(

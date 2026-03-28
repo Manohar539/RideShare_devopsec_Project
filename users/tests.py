@@ -5,5 +5,5 @@ from django.contrib.auth.models import User
 class UserTest(TestCase):
 
     def test_user_creation(self):
-        user = User.objects.create_user(username="testuser", password="12345")
+        user = User.objects.create_user(username="testuser", password="testpass12345")  # nosec
         self.assertEqual(user.username, "testuser")
