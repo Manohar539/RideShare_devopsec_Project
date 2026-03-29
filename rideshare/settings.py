@@ -2,17 +2,19 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback-secret')
 
-DEBUG = True
-ALLOWED_HOSTS = ['*']
+# 🔴 FIXED: Production setting
+DEBUG = False
 
+# 🔴 FIXED: Specific domain instead of '*'
+ALLOWED_HOSTS = [
+    'rideshareapp-env.eba-4stnu3e6.us-east-1.elasticbeanstalk.com'
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -27,7 +29,6 @@ INSTALLED_APPS = [
     'bookings',
 ]
 
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -38,15 +39,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
 ROOT_URLCONF = 'rideshare.urls'
-
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR / 'templates'],
-
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -58,9 +56,7 @@ TEMPLATES = [
     },
 ]
 
-
 WSGI_APPLICATION = 'rideshare.wsgi.application'
-
 
 DATABASES = {
     'default': {
@@ -68,7 +64,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -85,14 +80,13 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
 USE_TZ = True
 
-
+# Static files
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
@@ -101,17 +95,18 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+# 🔴 FIXED: Prevent HTTPS redirect issues
+SECURE_SSL_REDIRECT = False
 
+# Security headers
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 
-
+# Stripe (env-based)
 STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '')
 STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY', '')
 
-
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
-
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
