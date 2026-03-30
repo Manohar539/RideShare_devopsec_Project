@@ -11,9 +11,8 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect("/")  # redirect after success
+            return redirect("/")  # ✅ always go back to home
 
-        return render(request, "register.html", {"form": form})
+        return redirect("/")  # ❗ no render (prevents page redirect)
 
-    form = UserCreationForm()
-    return render(request, "register.html", {"form": form})
+    return redirect("/")
