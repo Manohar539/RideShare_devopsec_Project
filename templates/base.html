@@ -58,15 +58,14 @@
 
     <h2>Register</h2>
 
-    <form method="POST" action="{% url 'register' %}">
-        {% csrf_token %}
+   <form id="registerForm">
+    {% csrf_token %}
 
-        <!-- Django form fields -->
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="password" name="password1" placeholder="Password" required>
-        <input type="password" name="password2" placeholder="Confirm Password" required>
+    <input type="text" name="username" placeholder="Username" required>
+    <input type="password" name="password1" placeholder="Password" required>
+    <input type="password" name="password2" placeholder="Confirm Password" required>
 
-        <button type="submit">Register</button>
+    <button type="submit">Register</button>
     </form>
   </div>
 </div>

@@ -1,19 +1,24 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib import messages
-
+from django.contrib.auth import login
+from django.http import JsonResponse
 
 def register(request):
-
     if request.method == "POST":
         form = UserCreationForm(request.POST)
 
         if form.is_valid():
-            form.save()
-            messages.success(request, "Account created successfully!")
-            return redirect("login")
+            user = form.save()
 
-    else:
-        form = UserCreationForm()
+            # ✅ auto login after register
+            login(request, user)
 
-    return render(request, "register.html", {"form": form})
+            return JsonResponse({
+                "success": True
+            })
+
+        else:
+            return JsonResponse({
+                "success": False,
+                "errors": form.errors
+            })
+
+    return JsonResponse({"success": False})
