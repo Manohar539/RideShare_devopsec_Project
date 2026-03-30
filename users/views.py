@@ -1,7 +1,6 @@
-# users/views.py
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
-from django.shortcuts import redirect  # ✅ FIX: removed unused render import
+from django.shortcuts import redirect
 
 
 def register(request):
@@ -13,6 +12,7 @@ def register(request):
             login(request, user)
             return redirect("/")
 
-        return redirect("/")
+        # ❗ return back safely (no loop)
+        return redirect(request.META.get("HTTP_REFERER", "/"))
 
     return redirect("/")
