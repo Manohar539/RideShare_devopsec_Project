@@ -1,5 +1,9 @@
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
 from django.contrib.auth import login
 from django.http import JsonResponse
+
 
 def register(request):
     if request.method == "POST":
@@ -8,7 +12,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
 
-            # ✅ auto login after register
+            # auto login after register
             login(request, user)
 
             return JsonResponse({

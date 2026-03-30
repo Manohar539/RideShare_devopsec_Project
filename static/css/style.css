@@ -128,3 +128,9 @@ box-shadow:0 2px 8px rgba(0,0,0,0.1);
   cursor: pointer;
   font-size: 16px;
 }
+.input-hint {
+  display: block;
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 10px;
+}

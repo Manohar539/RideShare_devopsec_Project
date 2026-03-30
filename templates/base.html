@@ -61,12 +61,20 @@
    <form id="registerForm">
     {% csrf_token %}
 
+    <!-- Username -->
     <input type="text" name="username" placeholder="Username" required>
+    <small class="input-hint">e.g., john_doe</small>
+
+    <!-- Password -->
     <input type="password" name="password1" placeholder="Password" required>
+    <small class="input-hint">e.g., StrongPass123!</small>
+
+    <!-- Confirm Password -->
     <input type="password" name="password2" placeholder="Confirm Password" required>
+    <small class="input-hint">Re-enter your password</small>
 
     <button type="submit">Register</button>
-    </form>
+</form>
   </div>
 </div>
 {% block content %}
