@@ -1,3 +1,4 @@
+<!-- templates/base.html -->
 {% load static %}
 <!DOCTYPE html>
 <html> 
@@ -28,14 +29,13 @@
             </form>
 
         {% else %}
-            <!-- 🔥 CHANGE: Replace link with button -->
             <button onclick="openLogin()" class="login-btn">Login</button>
-           <button onclick="openRegister()" class="login-btn">Register</button>
+            <button onclick="openRegister()" class="login-btn">Register</button>
         {% endif %}
     </div>
 </nav>
 
-<!-- 🔥 LOGIN MODAL (ADD THIS BELOW NAVBAR) -->
+<!-- LOGIN MODAL -->
 <div id="loginModal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeLogin()">&times;</span>
@@ -44,6 +44,7 @@
 
     <form method="POST" action="{% url 'login' %}">
         {% csrf_token %}
+        <input type="hidden" name="next" value="/" />
 
         <input type="text" name="username" placeholder="Username" required>
         <input type="password" name="password" placeholder="Password" required>
@@ -52,31 +53,32 @@
     </form>
   </div>
 </div>
+
+<!-- REGISTER MODAL -->
 <div id="registerModal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeRegister()">&times;</span>
 
     <h2>Register</h2>
 
-   <form id="registerForm">
-    {% csrf_token %}
+    <!-- ✅ NORMAL FORM (NO AJAX) -->
+    <form method="POST" action="{% url 'register' %}">
+        {% csrf_token %}
 
-    <!-- Username -->
-    <input type="text" name="username" placeholder="Username" required>
-    <small class="input-hint">e.g., john_doe</small>
+        <input type="text" name="username" placeholder="Username" required>
+        <small class="input-hint">e.g., john_doe</small>
 
-    <!-- Password -->
-    <input type="password" name="password1" placeholder="Password" required>
-    <small class="input-hint">e.g., StrongPass123!</small>
+        <input type="password" name="password1" placeholder="Password" required>
+        <small class="input-hint">e.g., StrongPass123!</small>
 
-    <!-- Confirm Password -->
-    <input type="password" name="password2" placeholder="Confirm Password" required>
-    <small class="input-hint">Re-enter your password</small>
+        <input type="password" name="password2" placeholder="Confirm Password" required>
+        <small class="input-hint">Re-enter your password</small>
 
-    <button type="submit">Register</button>
-</form>
+        <button type="submit">Register</button>
+    </form>
   </div>
 </div>
+
 {% block content %}
 {% endblock %}
 

@@ -1,6 +1,7 @@
+# users/views.py
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
-from django.http import JsonResponse
+from django.shortcuts import redirect, render
 
 
 def register(request):
@@ -9,18 +10,10 @@ def register(request):
 
         if form.is_valid():
             user = form.save()
-
-            # auto login after register
             login(request, user)
+            return redirect("/")  # redirect after success
 
-            return JsonResponse({
-                "success": True
-            })
+        return render(request, "register.html", {"form": form})
 
-        else:
-            return JsonResponse({
-                "success": False,
-                "errors": form.errors
-            })
-
-    return JsonResponse({"success": False})
+    form = UserCreationForm()
+    return render(request, "register.html", {"form": form})
